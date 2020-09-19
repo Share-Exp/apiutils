@@ -20,13 +20,6 @@ const (
 	paramAccessToken = "access_token"
 )
 
-var (
-	oauthRestClient = rest.RequestBuilder{
-		BaseURL: "http://localhost:8080",
-		Timeout: 200 * time.Millisecond,
-	}
-)
-
 type accessToken struct {
 	ID       string `json:"id"`
 	UserID   int64  `json:"user_id"`
@@ -72,7 +65,7 @@ func GetClientID(request *http.Request) int64 {
 }
 
 // AuthenticateRequest is a function to validate the authentication in the request.
-func AuthenticateRequest(request *http.Request) resterrors.RestErr {
+func AuthenticateRequest(request *http.Request, baseURL string) resterrors.RestErr {
 	if request == nil {
 		return nil
 	}
@@ -85,7 +78,7 @@ func AuthenticateRequest(request *http.Request) resterrors.RestErr {
 		return nil
 	}
 
-	at, err := getAccessToken(accessTokenID)
+	at, err := getAccessToken(accessTokenID, baseURL)
 	if err != nil {
 		if err.Status() == http.StatusNotFound {
 			return nil
@@ -108,7 +101,12 @@ func cleanRequest(request *http.Request) {
 	request.Header.Del(headerXCallerID)
 }
 
-func getAccessToken(accessTokenID string) (*accessToken, resterrors.RestErr) {
+func getAccessToken(accessTokenID string, baseURL string) (*accessToken, resterrors.RestErr) {
+	oauthRestClient := rest.RequestBuilder{
+		BaseURL: baseURL,
+		Timeout: 200 * time.Millisecond,
+	}
+
 	response := oauthRestClient.Get(fmt.Sprintf("oauth/access_token/%s", accessTokenID))
 
 	if response == nil || response.Response == nil {
