@@ -90,3 +90,14 @@ func NewInternalServerError(message string, err error) RestErr {
 
 	return result
 }
+
+// NewUnauthorizedError is used to create a RestErr informing a Unauthorized and a message.
+func NewUnauthorizedError(message string) RestErr {
+	result := restErr{
+		ErrMessage: message,
+		ErrStatus:  http.StatusUnauthorized,
+		ErrError:   "unauthorized_error",
+	}
+
+	return result
+}
