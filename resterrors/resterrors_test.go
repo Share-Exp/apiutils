@@ -77,3 +77,23 @@ func TestNewInternalServerError(t *testing.T) {
 		t.Error("First Error Cause should be: database error.")
 	}
 }
+
+func TestNewNoContentError(t *testing.T) {
+	err := NewNotFoundError("This is the message.")
+
+	if err == nil {
+		t.Error("Error shouldn't be nil")
+	}
+
+	if err.Status() != http.StatusNoContent {
+		t.Error("Error should have status as No Content.")
+	}
+
+	if err.Message() != "This is the message." {
+		t.Error("Error should have the message as: This is the message.")
+	}
+
+	if err.Error() != "message: This is the message. - status: 204 - error: no_content - causes: []" {
+		t.Error("Error should have Error as: message: This is the message. - status: 204 - error: no_content - causes: []")
+	}
+}
