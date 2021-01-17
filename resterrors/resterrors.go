@@ -101,3 +101,12 @@ func NewUnauthorizedError(message string) RestErr {
 
 	return result
 }
+
+// NewNoContentError is used to create a RestErr informing a No Content and a message.
+func NewNoContentError(message string) RestErr {
+	return &restErr{
+		ErrMessage: message,
+		ErrStatus:  http.StatusNoContent,
+		ErrError:   "no_content",
+	}
+}
